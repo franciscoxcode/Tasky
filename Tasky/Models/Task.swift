@@ -13,4 +13,5 @@ struct Task: Identifiable {
     var isCompleted: Bool = false
     let createdAt = Date()
     var projectID: UUID
+    var reminders: [Reminder] = []
 }

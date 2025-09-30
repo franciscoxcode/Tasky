@@ -14,6 +14,8 @@ struct Event: Identifiable {
     var endDate: Date? = nil
     var projectID: UUID
     
+    var reminders: [Reminder] = []
+    
     init(
         emoji: Character? = nil,
         title: String,
