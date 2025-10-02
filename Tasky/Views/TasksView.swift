@@ -9,6 +9,6 @@ import SwiftUI
 
 struct TasksView: View {
     var body: some View {
-        Text("✅ Tasks")
+        ProjectsBar(projects: SampleData.sampleProjects, section: .tasks)
     }
 }
