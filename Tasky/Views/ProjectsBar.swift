@@ -13,6 +13,25 @@ struct ProjectsBar: View {
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 18) {
+                Button(action: {
+                    print("Create new project")
+                }) {
+                    VStack {
+                        Text("+")
+                            .font(.title)
+                            .frame(width: 60, height: 60)
+                            .background(Circle().fill(Color.gray.opacity(0.1)))
+                            .foregroundColor(.primary)
+                        
+                        Text("New")
+                            .font(.caption)
+                            .lineLimit(1)
+                            .frame(width: 55)
+                            .truncationMode(.tail)
+                            .foregroundColor(.primary)
+                    }
+                }
+                
                 ForEach(projects
                             .filter { $0.visibleIn.contains(section) }
                             .sorted { $0.order < $1.order }) { project in
@@ -32,7 +51,6 @@ struct ProjectsBar: View {
             }
             .padding(.leading, 25)
         }
-        .frame(height: 100)
     }
 }
 
