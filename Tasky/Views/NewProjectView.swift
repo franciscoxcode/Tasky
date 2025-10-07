@@ -24,6 +24,7 @@ struct NewProjectView: View {
     }
     
     @FocusState private var isEmojiFieldFocused: Bool
+    @FocusState private var isNameFieldFocused: Bool
 
     var body: some View {
         VStack(spacing: 16) {
@@ -47,11 +48,21 @@ struct NewProjectView: View {
                 .textFieldStyle(.plain)
                 .overlay(
                     TextField("", text: $emojiText)
-                        .opacity(0)
+                        .frame(width: 1, height: 1)
+                        .opacity(0.02)
+                        .focused($isEmojiFieldFocused)
+                        .keyboardType(.default)
+                        .submitLabel(.done)
+                        .onChange(of: emojiText) { oldValue, newValue in
+                            if newValue.count > 1 {
+                                emojiText = String(newValue.last!)
+                            }
+                        }
                 )
 
                 TextField("Project name", text: $name)
                     .textFieldStyle(.roundedBorder)
+                    .focused($isNameFieldFocused)
                 ColorPicker("", selection: $color, supportsOpacity: false)
                     .labelsHidden()
             }
@@ -110,6 +121,9 @@ struct NewProjectView: View {
         .background(Color.white.opacity(0.95))
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .shadow(radius: 12)
+        .onAppear {
+            isNameFieldFocused = true
+        }
     }
 }
 
