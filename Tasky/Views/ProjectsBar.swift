@@ -50,7 +50,7 @@ struct ProjectsBar: View {
                     }
                 }
             }
-            .padding(.leading, 25)
+            .padding(25)
         }
     }
 }

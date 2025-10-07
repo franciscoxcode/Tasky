@@ -36,14 +36,21 @@ struct NewProjectView: View {
             HStack(spacing: 12) {
                 ZStack {
                     Circle()
-                        .fill(color.opacity(0.2))
+                        .fill(color.opacity(isEmojiFieldFocused ? 0.35 : 0.2))
+                        .overlay(
+                            Circle()
+                                .stroke(isEmojiFieldFocused ? Color.accentColor : .clear, lineWidth: 3)
+                        )
                         .frame(width: 60, height: 60)
+                        .animation(.easeInOut(duration: 0.2), value: isEmojiFieldFocused)
 
                     Text(emojiText.isEmpty ? "📁" : emojiText)
                         .font(.largeTitle)
                 }
                 .onTapGesture {
                     isEmojiFieldFocused = true
+                    let generator = UIImpactFeedbackGenerator(style: .light)
+                    generator.impactOccurred()
                 }
                 .textFieldStyle(.plain)
                 .overlay(
