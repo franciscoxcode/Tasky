@@ -1,8 +1,8 @@
 import SwiftUI
 
 struct NewProjectView: View {
-    @Environment(\.dismiss) private var dismiss
     var onSave: (Project) -> Void
+    var onCancel: () -> Void
 
     @State private var name = ""
     @State private var emojiText = ""
@@ -85,7 +85,7 @@ struct NewProjectView: View {
 
             HStack(spacing: 20) {
                 Button("Cancel") {
-                    dismiss()
+                    onCancel()
                 }
                 .buttonStyle(.bordered)
 
@@ -98,7 +98,6 @@ struct NewProjectView: View {
                         visibleIn: visibleIn
                     )
                     onSave(project)
-                    dismiss()
                 }
                 .buttonStyle(.borderedProminent)
                 .disabled(isSaveDisabled)
@@ -140,7 +139,12 @@ private struct SectionToggleButton: View {
 }
 
 #Preview {
-    NewProjectView { newProject in
-        print("Preview created:", newProject)
-    }
+    NewProjectView(
+        onSave: { newProject in
+            print("Preview created:", newProject)
+        },
+        onCancel: {
+            print("Preview canceled")
+        }
+    )
 }

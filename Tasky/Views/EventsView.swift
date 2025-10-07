@@ -9,8 +9,6 @@ import SwiftUI
 
 struct EventsView: View {
     var body: some View {
-        VStack (){
-            ProjectsBar(projects: SampleData.sampleProjects, section: .events)
-        }
+       Text("Events")
     }
 }

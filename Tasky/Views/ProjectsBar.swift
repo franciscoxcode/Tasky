@@ -9,12 +9,13 @@ import SwiftUI
 struct ProjectsBar: View {
     let projects: [Project]
     let section: Project.SectionType
+    var onTapNew: (() -> Void)? = nil
     
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 18) {
                 Button(action: {
-                    print("Create new project")
+                    onTapNew?()
                 }) {
                     VStack {
                         Text("+")
