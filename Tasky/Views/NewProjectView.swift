@@ -98,7 +98,6 @@ struct NewProjectView: View {
                 Button("Cancel") {
                     onCancel()
                 }
-                .buttonStyle(.bordered)
 
                 Button("Save") {
                     let emojiChar: Character? = emojiText.first
@@ -110,7 +109,7 @@ struct NewProjectView: View {
                     )
                     onSave(project)
                 }
-                .buttonStyle(.borderedProminent)
+                
                 .disabled(isSaveDisabled)
             }
             .padding(.top, 14)
