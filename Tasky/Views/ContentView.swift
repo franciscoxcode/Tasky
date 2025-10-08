@@ -26,50 +26,49 @@ struct ContentView: View {
     }
     
     var body: some View {
-        TabView(selection: $selectedTab) {
-            EventsView()
-                .tabItem { Label("Events", systemImage: "calendar") }
-                .tag(Tab.events)
-
-            TasksView()
-                .tabItem { Label("Tasks", systemImage: "checkmark.circle") }
-                .tag(Tab.tasks)
-
-            NotesView()
-                .tabItem { Label("Notes", systemImage: "note.text") }
-                .tag(Tab.notes)
-        }
-        .safeAreaInset(edge: .top) {
-            ProjectsBar(
+        VStack {
+            NavigationBarView(
                 projects: projects,
                 section: currentSection,
                 onTapNew: { showNewProject = true }
             )
-            .padding(.top, 8)
-            .padding(.bottom, 4)
-        }
-        .overlay {
-            if showNewProject {
-                ZStack {
-                    Color.black.opacity(0.35)
-                        .ignoresSafeArea()
-                        .onTapGesture { showNewProject = false }
-
-                    NewProjectView(
-                        onSave: { newProject in
-                            projects.append(newProject)
-                            showNewProject = false
-                        },
-                        onCancel: {
-                            showNewProject = false
-                        }
-                    )
-                    .padding()
-                    .transition(.scale)
-                }
+            
+            TabView(selection: $selectedTab) {
+                EventsView()
+                    .tabItem { Label("Events", systemImage: "calendar") }
+                    .tag(Tab.events)
+                
+                TasksView()
+                    .tabItem { Label("Tasks", systemImage: "checkmark.circle") }
+                    .tag(Tab.tasks)
+                
+                NotesView()
+                    .tabItem { Label("Notes", systemImage: "note.text") }
+                    .tag(Tab.notes)
             }
         }
-        .animation(.easeInOut, value: showNewProject)
+            .overlay {
+                if showNewProject {
+                    ZStack {
+                        Color.gray.opacity(0.1)
+                            .ignoresSafeArea()
+                            .onTapGesture { showNewProject = false }
+                        
+                        NewProjectView(
+                            onSave: { newProject in
+                                projects.append(newProject)
+                                showNewProject = false
+                            },
+                            onCancel: {
+                                showNewProject = false
+                            }
+                        )
+                        .padding()
+                        .transition(.scale)
+                    }
+                }
+            }
+            .animation(.easeInOut, value: showNewProject)
     }
 }
 
