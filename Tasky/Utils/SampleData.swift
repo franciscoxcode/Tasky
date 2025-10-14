@@ -29,7 +29,30 @@ struct SampleData {
     
     static let sampleEvents = [
         Event(emoji: "🎤", title: "iOS Conference", date: Date(), projectID: sampleProjects[1].id, order: 0),
-        Event(emoji: "💪", title: "Gym session", date: Date(), projectID: sampleProjects[2].id, order: 1)
+        Event(emoji: "💪", title: "Gym session", date: Date(), projectID: sampleProjects[2].id, order: 1),
+        Event(
+                   emoji: "🎂",
+                   title: "Birthday Party",
+                   date: DateComponents(calendar: .current, year: 2025, month: 10, day: 14).date!,
+                   projectID: SampleData.sampleProjects.first!.id,
+                   order: 0
+               ),
+        Event(
+                  emoji: "🏕️",
+                  title: "Camping Trip",
+                  date: DateComponents(calendar: .current, year: 2025, month: 10, day: 14).date!,
+                  projectID: SampleData.sampleProjects.first!.id,
+                  endDate: DateComponents(calendar: .current, year: 2025, month: 10, day: 17).date!,
+                  order: 1
+              ),
+        Event(
+                   emoji: "✈️",
+                   title: "Trip to Tokyo",
+                   date: DateComponents(calendar: .current, year: 2025, month: 11, day: 3).date!,
+                   projectID: SampleData.sampleProjects.last!.id,
+                   endDate: DateComponents(calendar: .current, year: 2025, month: 12, day: 10).date!,
+                   order: 2
+               )
     ]
     
     static let sampleNotes = [

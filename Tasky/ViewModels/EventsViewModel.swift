@@ -60,4 +60,26 @@ final class EventsViewModel: ObservableObject {
 
         updateFilter(selectedProjectID: selectedProjectID)
     }
+
+    // 🗓️ NUEVA FUNCIÓN: formatea un rango de fechas de forma inteligente
+    func formattedDateRange(start: Date, end: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US") // usa "es_ES" o "fr_FR" si quieres otro idioma
+        formatter.dateFormat = "d MMMM yyyy"
+
+        let sameMonth = Calendar.current.isDate(start, equalTo: end, toGranularity: .month)
+        let sameYear = Calendar.current.isDate(start, equalTo: end, toGranularity: .year)
+
+        if sameMonth && sameYear {
+            let dayFormatter = DateFormatter()
+            dayFormatter.dateFormat = "d"
+            let startDay = dayFormatter.string(from: start)
+            let endDay = dayFormatter.string(from: end)
+            let monthYear = formatter.string(from: end).components(separatedBy: " ").dropFirst().joined(separator: " ")
+            return "\(startDay) – \(endDay) \(monthYear)"
+        } else {
+            formatter.dateFormat = "d MMM yyyy"
+            return "\(formatter.string(from: start)) – \(formatter.string(from: end))"
+        }
+    }
 }

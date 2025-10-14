@@ -30,9 +30,16 @@ struct EventsView: View {
                                     .font(.headline)
                             }
 
-                            Text(event.date, style: .date)
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
+                            if let endDate = event.endDate, endDate != event.date {
+                                Text(viewModel.formattedDateRange(start: event.date, end: endDate))
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+                            } else {
+                                Text(event.date, style: .date)
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+                            }
+                            
                         }
                     }
                     .onMove { indices, newOffset in
