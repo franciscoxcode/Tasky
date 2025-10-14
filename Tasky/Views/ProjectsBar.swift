@@ -18,7 +18,7 @@ struct ProjectsBar: View {
                     VStack {
                         Text("+")
                             .font(.title)
-                            .frame(width: 60, height: 60)
+                            .frame(width: 64, height: 64)
                             .background(Circle().fill(Color.gray.opacity(0.1)))
                             .foregroundColor(.primary)
 
@@ -39,6 +39,16 @@ struct ProjectsBar: View {
                 .onTapGesture {
                     selectedProjectID = nil
                 }
+                Button {
+                    selectedProjectID = nil
+                } label: {
+                    ProjectButtonContent(
+                        title: "All",
+                        iconText: "📦",
+                        isSelected: selectedProjectID == nil
+                    )
+                }
+                .buttonStyle(.plain)
 
                 // Proyectos
                 ForEach(
@@ -53,7 +63,16 @@ struct ProjectsBar: View {
                     )
                     .onTapGesture {
                         selectedProjectID = project.id
+                    Button {
+                        selectedProjectID = project.id
+                    } label: {
+                        ProjectButtonContent(
+                            title: project.name,
+                            iconText: String(project.emoji),
+                            isSelected: selectedProjectID == project.id
+                        )
                     }
+                    .buttonStyle(.plain)
                     .onLongPressGesture {
                         onEdit?(project)     // 👈 dispara edición
                     }
