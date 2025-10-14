@@ -18,7 +18,7 @@ struct ProjectsBar: View {
                     VStack {
                         Text("+")
                             .font(.title)
-                            .frame(width: 60, height: 60)
+                            .frame(width: 64, height: 64)
                             .background(Circle().fill(Color.gray.opacity(0.1)))
                             .foregroundColor(.primary)
 
@@ -36,7 +36,7 @@ struct ProjectsBar: View {
                 } label: {
                     ProjectButtonContent(
                         title: "All",
-                        iconText: "All",
+                        iconText: "📦",
                         isSelected: selectedProjectID == nil
                     )
                 }
