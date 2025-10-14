@@ -92,6 +92,9 @@ struct ContentView: View {
                         },
                         onDelete: {
                             projects.removeAll { $0.id == projectToEdit.id }
+                            if selectedProjectID == projectToEdit.id {
+                                selectedProjectID = nil
+                            }
                             editingProject = nil
                         }, onCancel: {
                             editingProject = nil

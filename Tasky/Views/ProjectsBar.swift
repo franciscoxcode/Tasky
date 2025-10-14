@@ -5,13 +5,17 @@ struct ProjectsBar: View {
     let section: Project.SectionType
     @Binding var selectedProjectID: UUID?
     var onTapNew: (() -> Void)? = nil
-    var onEdit: ((Project) -> Void)? = nil   // 👈 nuevo
+    var onEdit: ((Project) -> Void)? = nil
+
+    private var visibleProjects: [Project] {
+        projects
+            .filter { $0.visibleIn.contains(section) }
+            .sorted { $0.order < $1.order }
+    }
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 18) {
-
-                // Botón "+" para nuevo proyecto
                 Button {
                     onTapNew?()
                 } label: {
@@ -30,86 +34,82 @@ struct ProjectsBar: View {
                             .foregroundColor(.primary)
                     }
                 }
-
-                ProjectButtonContent(
-                    title: "All",
-                    iconText: "All",
-                    isSelected: selectedProjectID == nil
-                )
-                .onTapGesture {
-                    selectedProjectID = nil
-                }
-                Button {
-                    selectedProjectID = nil
-                } label: {
-                    ProjectButtonContent(
-                        title: "All",
-                        iconText: "📦",
-                        isSelected: selectedProjectID == nil
-                    )
-                }
                 .buttonStyle(.plain)
 
-                // Proyectos
-                ForEach(
-                    projects
-                        .filter { $0.visibleIn.contains(section) }
-                        .sorted { $0.order < $1.order }
-                ) { project in
-                    ProjectButtonContent(
+                projectSelectionButton(
+                    title: "All",
+                    iconText: "📦",
+                    isSelected: selectedProjectID == nil
+                ) {
+                    selectedProjectID = nil
+                }
+
+                ForEach(visibleProjects) { project in
+                    projectSelectionButton(
                         title: project.name,
                         iconText: String(project.emoji),
                         isSelected: selectedProjectID == project.id
-                    )
-                    .onTapGesture {
+                    ) {
                         selectedProjectID = project.id
-                    Button {
+                    } onLongPress: {
                         selectedProjectID = project.id
-                    } label: {
-                        ProjectButtonContent(
-                            title: project.name,
-                            iconText: String(project.emoji),
-                            isSelected: selectedProjectID == project.id
-                        )
-                    }
-                    .buttonStyle(.plain)
-                    .onLongPressGesture {
-                        onEdit?(project)     // 👈 dispara edición
+                        onEdit?(project)
                     }
                 }
             }
             .padding(.horizontal, 25)
         }
     }
-}
 
-private struct ProjectButtonContent: View {
-    let title: String
-    let iconText: String
-    let isSelected: Bool
+    @ViewBuilder
+    private func projectSelectionButton(
+        title: String,
+        iconText: String,
+        isSelected: Bool,
+        onTap: @escaping () -> Void,
+        onLongPress: (() -> Void)? = nil
+    ) -> some View {
+        ProjectButtonContent(
+            title: title,
+            iconText: iconText,
+            isSelected: isSelected
+        )
+        .contentShape(Rectangle())
+        .onTapGesture(perform: onTap)
+        .highPriorityGesture(
+            LongPressGesture(minimumDuration: 0.45)
+                .onEnded { _ in onLongPress?() }
+        )
+    }
 
-    var body: some View {
-        VStack {
-            Text(iconText)
-                .font(.title)
-                .frame(width: 60, height: 60)
-                .background(
-                    Circle()
-                        .fill(isSelected ? Color.accentColor.opacity(0.2) : Color.gray.opacity(0.1))
-                        .overlay(
-                            Circle()
-                                .stroke(isSelected ? Color.accentColor : Color.clear, lineWidth: 2)
-                        )
-                )
+    private struct ProjectButtonContent: View {
+        let title: String
+        let iconText: String
+        let isSelected: Bool
 
-            Text(title)
-                .font(.caption)
-                .lineLimit(1)
-                .frame(width: 55)
-                .truncationMode(.tail)
-                .foregroundColor(.primary)
+        var body: some View {
+            VStack {
+                Text(iconText)
+                    .font(.title)
+                    .frame(width: 60, height: 60)
+                    .background(
+                        Circle()
+                            .fill(isSelected ? Color.accentColor.opacity(0.2) : Color.gray.opacity(0.1))
+                            .overlay(
+                                Circle()
+                                    .stroke(isSelected ? Color.accentColor : Color.clear, lineWidth: 2)
+                            )
+                    )
+
+                Text(title)
+                    .font(.caption)
+                    .lineLimit(1)
+                    .frame(width: 55)
+                    .truncationMode(.tail)
+                    .foregroundColor(.primary)
+            }
+            .foregroundColor(.primary)
         }
-        .foregroundColor(.primary)
     }
 }
 
