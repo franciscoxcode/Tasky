@@ -8,27 +8,34 @@
 import SwiftUI
 
 struct NavigationBarView: View {
-    let projects: [Project]
-        let section: Project.SectionType
-        var onTapNew: () -> Void
+    @Binding var projects: [Project]
+    let section: Project.SectionType
+    var onTapNew: () -> Void
+    @State private var showReorderSheet = false
     
     var body: some View {
         VStack {
             HStack {
                 Button(action: {
-                    // Placeholder for reorder projects action
+                    showReorderSheet = true
                 }) {
                     Image(systemName: "line.3.horizontal")
                         .font(.title2)
-                      
+                        .foregroundColor(.accentColor)
                 }
+                .sheet(isPresented: $showReorderSheet) {
+                    ReorderProjectsView(projects: $projects)
+                }
+
                 Spacer()
+
                 HStack(spacing: 10) {
                     Image(systemName: "dollarsign.circle.fill")
                         .foregroundColor(.yellow)
                         .font(.title3)
+                    
                     Button(action: {
-                        // Placeholder for settings action
+                        // Placeholder para abrir configuración
                     }) {
                         Image(systemName: "person.circle.fill")
                             .foregroundColor(.primary)
@@ -40,17 +47,20 @@ struct NavigationBarView: View {
             .padding(.horizontal, 25)
             .padding(.top, 15)
             .padding(.bottom, 12)
-            ProjectsBar(projects: projects,
-                        section: section,
-                        onTapNew: onTapNew)
+            
+            ProjectsBar(
+                projects: projects,
+                section: section,
+                onTapNew: onTapNew
+            )
         }
     }
 }
 
 #Preview {
     NavigationBarView(
-        projects: SampleData.sampleProjects,
-                section: .tasks,
-                onTapNew: {}
+        projects: .constant(SampleData.sampleProjects),
+        section: .tasks,
+        onTapNew: {}
     )
 }

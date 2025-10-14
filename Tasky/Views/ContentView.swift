@@ -28,7 +28,7 @@ struct ContentView: View {
     var body: some View {
         VStack {
             NavigationBarView(
-                projects: projects,
+                projects: $projects,
                 section: currentSection,
                 onTapNew: { showNewProject = true }
             )

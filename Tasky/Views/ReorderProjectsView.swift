@@ -4,29 +4,42 @@
 //
 //  Created by Francisco Jean on 13/10/25.
 //
+
 import SwiftUI
 
 struct ReorderProjectsView: View {
-    let projects = SampleData.sampleProjects
-    
+    @Binding var projects: [Project]
+    @State private var editMode: EditMode = .active
+    @Environment(\.dismiss) private var dismiss
+
     var body: some View {
-        List {
-            Section("Reorder Projects") {
-                ForEach(projects) { project in
-                    HStack(spacing: 15) {
-                        Image(systemName: "line.3.horizontal")
-                            .foregroundColor(.accentColor)
-                        Text(String(project.emoji))
-                        Text(project.name)
+        NavigationStack {
+            List {
+                Section("Reorder Projects") {
+                    ForEach(projects) { project in
+                        HStack(spacing: 15) {
+                            Text(String(project.emoji))
+                            Text(project.name)
+                        }
+                        .padding(3)
                     }
-                    .padding(3)
+                    .onMove { indices, newOffset in
+                        projects.move(fromOffsets: indices, toOffset: newOffset)
                     }
+                }
+            }
+            .environment(\.editMode, $editMode)
+            .toolbar {
+                Button("Done") {
+                    editMode = .inactive
+                    dismiss()
+                }
+                .bold()
             }
         }
-        .font(.system( size: 16))
     }
 }
 
 #Preview {
-    ReorderProjectsView()
+    ReorderProjectsView(projects: .constant(SampleData.sampleProjects))
 }
