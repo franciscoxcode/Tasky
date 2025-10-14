@@ -124,7 +124,7 @@ struct NewProjectView: View {
         }
         .padding(20)
         .frame(width: 300)
-        .background(Color.white.opacity(0.95))
+        .background(Color(.secondarySystemBackground))
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .shadow(radius: 12)
         .onAppear {
