@@ -1,0 +1,28 @@
+# Xcode
+DerivedData/
+*.xcuserstate
+*.xcuserdata/
+*.xcscmblueprint
+
+# SwiftPM
+.build/
+Packages/
+Package.pins
+Package.resolved
+
+# Logs
+*.log
+
+# macOS
+.DS_Store
+
+# User-specific files
+xcuserdata/
+*.swp
+
+# Ignore Playgrounds
+timeline.xctimeline
+playground.xcworkspace
+
+# Ignore any temp files
+*.tmp
