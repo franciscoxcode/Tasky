@@ -15,13 +15,15 @@ struct Event: Identifiable {
     var projectID: UUID
     
     var reminders: [Reminder] = []
-    
+    var order: Int
+
     init(
         emoji: Character? = nil,
         title: String,
         date: Date,
         projectID: UUID,
-        endDate: Date? = nil
+        endDate: Date? = nil,
+        order: Int = 0
     ) {
         if let e = emoji, e.unicodeScalars.first?.properties.isEmojiPresentation == true {
             self.emoji = e
@@ -33,6 +35,6 @@ struct Event: Identifiable {
         self.date = date
         self.projectID = projectID
         self.endDate = endDate
+        self.order = order
     }
 }
-

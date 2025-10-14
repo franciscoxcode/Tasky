@@ -13,4 +13,17 @@ struct Note: Identifiable {
     let createdAt = Date()
     var updatedAt = Date()
     var projectID: UUID
+    var order: Int
+
+    init(
+        title: String? = nil,
+        content: String,
+        projectID: UUID,
+        order: Int = 0
+    ) {
+        self.title = title
+        self.content = content
+        self.projectID = projectID
+        self.order = order
+    }
 }

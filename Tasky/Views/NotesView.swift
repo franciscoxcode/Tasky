@@ -2,6 +2,7 @@ import SwiftUI
 
 struct NotesView: View {
     @ObservedObject var viewModel: NotesViewModel
+    let selectedProjectID: UUID?
 
     var body: some View {
         Group {
@@ -12,24 +13,33 @@ struct NotesView: View {
                     Text("Try selecting a different project or create a new note.")
                 })
             } else {
-                List(viewModel.filteredNotes) { note in
-                    VStack(alignment: .leading, spacing: 4) {
-                        if let title = note.title, !title.isEmpty {
-                            Text(title)
-                                .font(.headline)
-                        }
+                List {
+                    ForEach(viewModel.filteredNotes) { note in
+                        VStack(alignment: .leading, spacing: 4) {
+                            if let title = note.title, !title.isEmpty {
+                                Text(title)
+                                    .font(.headline)
+                            }
 
-                        Text(note.content)
-                            .font(.body)
-                            .foregroundColor(.secondary)
+                            Text(note.content)
+                                .font(.body)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                    .onMove { indices, newOffset in
+                        viewModel.move(from: indices, to: newOffset, selectedProjectID: selectedProjectID)
                     }
                 }
                 .listStyle(.plain)
+                .environment(\.editMode, .constant(.active))
             }
         }
     }
 }
 
 #Preview {
-    NotesView(viewModel: NotesViewModel(notes: SampleData.sampleNotes))
+    NotesView(
+        viewModel: NotesViewModel(notes: SampleData.sampleNotes),
+        selectedProjectID: nil
+    )
 }

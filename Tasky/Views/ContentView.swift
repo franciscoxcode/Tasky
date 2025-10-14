@@ -43,15 +43,24 @@ struct ContentView: View {
             )
 
             TabView(selection: $selectedTab) {
-                EventsView(viewModel: eventsViewModel)
+                EventsView(
+                    viewModel: eventsViewModel,
+                    selectedProjectID: selectedProjectID
+                )
                     .tabItem { Label("Events", systemImage: "calendar") }
                     .tag(Tab.events)
 
-                TasksView(viewModel: tasksViewModel)
+                TasksView(
+                    viewModel: tasksViewModel,
+                    selectedProjectID: selectedProjectID
+                )
                     .tabItem { Label("Tasks", systemImage: "checkmark.circle") }
                     .tag(Tab.tasks)
 
-                NotesView(viewModel: notesViewModel)
+                NotesView(
+                    viewModel: notesViewModel,
+                    selectedProjectID: selectedProjectID
+                )
                     .tabItem { Label("Notes", systemImage: "note.text") }
                     .tag(Tab.notes)
             }

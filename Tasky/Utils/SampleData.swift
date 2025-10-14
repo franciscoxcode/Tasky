@@ -22,18 +22,18 @@ struct SampleData {
     ]
     
     static let sampleTasks = [
-        Task(title: "Finish SwiftUI tutorial", projectID: sampleProjects[0].id),
-        Task(title: "Prepare meeting slides", projectID: sampleProjects[1].id),
-        Task(title: "Do 20 push-ups", projectID: sampleProjects[2].id)
+        Task(title: "Finish SwiftUI tutorial", projectID: sampleProjects[0].id, order: 0),
+        Task(title: "Prepare meeting slides", projectID: sampleProjects[1].id, order: 1),
+        Task(title: "Do 20 push-ups", projectID: sampleProjects[2].id, order: 2)
     ]
     
     static let sampleEvents = [
-        Event(emoji: "🎤", title: "iOS Conference", date: Date(), projectID: sampleProjects[1].id),
-        Event(emoji: "💪", title: "Gym session", date: Date(), projectID: sampleProjects[2].id)
+        Event(emoji: "🎤", title: "iOS Conference", date: Date(), projectID: sampleProjects[1].id, order: 0),
+        Event(emoji: "💪", title: "Gym session", date: Date(), projectID: sampleProjects[2].id, order: 1)
     ]
     
     static let sampleNotes = [
-        Note(title: "App idea", content: "A fun productivity app!", projectID: sampleProjects[0].id),
-        Note(title: "Workout tips", content: "Don’t skip leg day!", projectID: sampleProjects[2].id)
+        Note(title: "App idea", content: "A fun productivity app!", projectID: sampleProjects[0].id, order: 0),
+        Note(title: "Workout tips", content: "Don’t skip leg day!", projectID: sampleProjects[2].id, order: 1)
     ]
 }
