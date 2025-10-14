@@ -3,6 +3,7 @@ import SwiftUI
 struct NavigationBarView: View {
     @Binding var projects: [Project]
     let section: Project.SectionType
+    @Binding var selectedProjectID: UUID?
     var onTapNew: () -> Void
     var onEdit: (Project) -> Void
     @State private var showReorderSheet = false
@@ -45,6 +46,7 @@ struct NavigationBarView: View {
             ProjectsBar(
                 projects: projects,
                 section: section,
+                selectedProjectID: $selectedProjectID,
                 onTapNew: onTapNew,
                 onEdit: onEdit
             )
@@ -56,6 +58,7 @@ struct NavigationBarView: View {
     NavigationBarView(
         projects: .constant(SampleData.sampleProjects),
         section: .tasks,
+        selectedProjectID: .constant(nil),
         onTapNew: {},
         onEdit: { _ in }
     )
