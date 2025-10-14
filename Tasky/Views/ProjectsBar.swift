@@ -31,6 +31,14 @@ struct ProjectsBar: View {
                     }
                 }
 
+                ProjectButtonContent(
+                    title: "All",
+                    iconText: "All",
+                    isSelected: selectedProjectID == nil
+                )
+                .onTapGesture {
+                    selectedProjectID = nil
+                }
                 Button {
                     selectedProjectID = nil
                 } label: {
@@ -48,6 +56,13 @@ struct ProjectsBar: View {
                         .filter { $0.visibleIn.contains(section) }
                         .sorted { $0.order < $1.order }
                 ) { project in
+                    ProjectButtonContent(
+                        title: project.name,
+                        iconText: String(project.emoji),
+                        isSelected: selectedProjectID == project.id
+                    )
+                    .onTapGesture {
+                        selectedProjectID = project.id
                     Button {
                         selectedProjectID = project.id
                     } label: {
