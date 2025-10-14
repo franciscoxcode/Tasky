@@ -14,6 +14,9 @@ struct ContentView: View {
     @State private var showNewProject = false
     @State private var editingProject: Project? = nil
     @State private var selectedProjectID: UUID? = nil
+    @StateObject private var tasksViewModel = TasksViewModel(tasks: SampleData.sampleTasks)
+    @StateObject private var eventsViewModel = EventsViewModel(events: SampleData.sampleEvents)
+    @StateObject private var notesViewModel = NotesViewModel(notes: SampleData.sampleNotes)
 
     private var currentSection: Project.SectionType {
         switch selectedTab {
@@ -40,15 +43,15 @@ struct ContentView: View {
             )
 
             TabView(selection: $selectedTab) {
-                EventsView()
+                EventsView(viewModel: eventsViewModel)
                     .tabItem { Label("Events", systemImage: "calendar") }
                     .tag(Tab.events)
 
-                TasksView()
+                TasksView(viewModel: tasksViewModel)
                     .tabItem { Label("Tasks", systemImage: "checkmark.circle") }
                     .tag(Tab.tasks)
 
-                NotesView()
+                NotesView(viewModel: notesViewModel)
                     .tabItem { Label("Notes", systemImage: "note.text") }
                     .tag(Tab.notes)
             }
@@ -107,6 +110,21 @@ struct ContentView: View {
         }
         .animation(.easeInOut, value: showNewProject)
         .animation(.easeInOut, value: editingProject)
+        .onChange(of: selectedProjectID) { newValue in
+            tasksViewModel.updateFilter(selectedProjectID: newValue)
+            eventsViewModel.updateFilter(selectedProjectID: newValue)
+            notesViewModel.updateFilter(selectedProjectID: newValue)
+        }
+        .onChange(of: selectedTab) { _ in
+            guard
+                let selectedID = selectedProjectID,
+                let project = projects.first(where: { $0.id == selectedID })
+            else { return }
+
+            if project.visibleIn.contains(currentSection) == false {
+                selectedProjectID = nil
+            }
+        }
     }
 }
 

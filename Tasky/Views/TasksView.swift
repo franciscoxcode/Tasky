@@ -8,7 +8,31 @@
 import SwiftUI
 
 struct TasksView: View {
+    @ObservedObject var viewModel: TasksViewModel
+
     var body: some View {
-        Text("Tasks")
+        Group {
+            if viewModel.filteredTasks.isEmpty {
+                ContentUnavailableView(label: {
+                    Label("No Tasks", systemImage: "checkmark.circle")
+                }, description: {
+                    Text("Try selecting a different project or create a new task.")
+                })
+            } else {
+                List(viewModel.filteredTasks) { task in
+                    HStack {
+                        Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "circle")
+                            .foregroundColor(task.isCompleted ? .green : .gray)
+
+                        Text(task.title)
+                    }
+                }
+                .listStyle(.plain)
+            }
+        }
     }
+}
+
+#Preview {
+    TasksView(viewModel: TasksViewModel(tasks: SampleData.sampleTasks))
 }
