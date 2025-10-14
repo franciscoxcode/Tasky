@@ -3,6 +3,7 @@ import SwiftUI
 struct ProjectsBar: View {
     let projects: [Project]
     let section: Project.SectionType
+    @Binding var selectedProjectID: UUID?
     var onTapNew: (() -> Void)? = nil
     var onEdit: ((Project) -> Void)? = nil   // 👈 nuevo
 
@@ -30,23 +31,28 @@ struct ProjectsBar: View {
                     }
                 }
 
+                ProjectButtonContent(
+                    title: "All",
+                    iconText: "All",
+                    isSelected: selectedProjectID == nil
+                )
+                .onTapGesture {
+                    selectedProjectID = nil
+                }
+
                 // Proyectos
                 ForEach(
                     projects
                         .filter { $0.visibleIn.contains(section) }
                         .sorted { $0.order < $1.order }
                 ) { project in
-                    VStack {
-                        Text(String(project.emoji))
-                            .font(.title)
-                            .frame(width: 60, height: 60)
-                            .background(Circle().fill(Color.gray.opacity(0.1)))
-
-                        Text(project.name)
-                            .font(.caption)
-                            .lineLimit(1)
-                            .frame(width: 55)
-                            .truncationMode(.tail)
+                    ProjectButtonContent(
+                        title: project.name,
+                        iconText: String(project.emoji),
+                        isSelected: selectedProjectID == project.id
+                    )
+                    .onTapGesture {
+                        selectedProjectID = project.id
                     }
                     .onLongPressGesture {
                         onEdit?(project)     // 👈 dispara edición
@@ -58,10 +64,41 @@ struct ProjectsBar: View {
     }
 }
 
+private struct ProjectButtonContent: View {
+    let title: String
+    let iconText: String
+    let isSelected: Bool
+
+    var body: some View {
+        VStack {
+            Text(iconText)
+                .font(.title)
+                .frame(width: 60, height: 60)
+                .background(
+                    Circle()
+                        .fill(isSelected ? Color.accentColor.opacity(0.2) : Color.gray.opacity(0.1))
+                        .overlay(
+                            Circle()
+                                .stroke(isSelected ? Color.accentColor : Color.clear, lineWidth: 2)
+                        )
+                )
+
+            Text(title)
+                .font(.caption)
+                .lineLimit(1)
+                .frame(width: 55)
+                .truncationMode(.tail)
+                .foregroundColor(.primary)
+        }
+        .foregroundColor(.primary)
+    }
+}
+
 #Preview {
     ProjectsBar(
         projects: SampleData.sampleProjects,
         section: .tasks,
+        selectedProjectID: .constant(nil),
         onTapNew: {},
         onEdit: { _ in }
     )

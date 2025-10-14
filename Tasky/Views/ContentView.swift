@@ -13,6 +13,7 @@ struct ContentView: View {
     @State private var projects: [Project] = SampleData.sampleProjects
     @State private var showNewProject = false
     @State private var editingProject: Project? = nil
+    @State private var selectedProjectID: UUID? = nil
 
     private var currentSection: Project.SectionType {
         switch selectedTab {
@@ -31,6 +32,7 @@ struct ContentView: View {
             NavigationBarView(
                 projects: $projects,
                 section: currentSection,
+                selectedProjectID: $selectedProjectID,
                 onTapNew: { showNewProject = true },
                 onEdit: { project in
                     editingProject = project
