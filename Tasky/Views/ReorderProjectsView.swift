@@ -14,19 +14,23 @@ struct ReorderProjectsView: View {
 
     var body: some View {
         NavigationStack {
-            List {
-                Section("Reorder Projects") {
-                    ForEach(projects) { project in
-                        HStack(spacing: 15) {
-                            Text(String(project.emoji))
-                            Text(project.name)
+            VStack {
+                List {
+                    Section("Reorder Projects") {
+                        ForEach(projects) { project in
+                            HStack(spacing: 15) {
+                                Text(String(project.emoji))
+                                Text(project.name)
+                            }
+                            .padding(3)
                         }
-                        .padding(3)
-                    }
-                    .onMove { indices, newOffset in
-                        projects.move(fromOffsets: indices, toOffset: newOffset)
+                        .onMove { indices, newOffset in
+                            projects.move(fromOffsets: indices, toOffset: newOffset)
+                        }
                     }
                 }
+                .scrollContentBackground(.hidden)
+                .background(Color(.secondarySystemBackground))
             }
             .environment(\.editMode, $editMode)
             .toolbar {
@@ -37,6 +41,7 @@ struct ReorderProjectsView: View {
                 .bold()
             }
         }
+        .background(Color.black.opacity(0.3).ignoresSafeArea())
     }
 }
 

@@ -14,12 +14,12 @@ struct Project: Identifiable {
         case events, tasks, notes
     }
     
-    let id = UUID()
+    let id: UUID
     var emoji: Character
     var name: String
     var color: Color
     var visibleIn: Set<SectionType> = [.events, .tasks, .notes]
-    var order: Int = 0
+    var order: Int
     
     
     // Lista de posibles emojis por defecto
@@ -29,11 +29,14 @@ struct Project: Identifiable {
     private static var usedEmojis: Set<Character> = []
     
     init(
+        id: UUID = UUID(),
         emoji: Character? = nil,
         name: String,
         color: Color,
         visibleIn: Set<SectionType> = [.events, .tasks, .notes],
+        order: Int = 0
     ) {
+        self.id = id
         if let e = emoji, e.unicodeScalars.first?.properties.isEmojiPresentation == true {
             self.emoji = e
             Project.usedEmojis.insert(e)
@@ -50,5 +53,12 @@ struct Project: Identifiable {
         self.name = name
         self.color = color
         self.visibleIn = visibleIn
+        self.order = order
+    }
+}
+
+extension Project: Equatable {
+    static func == (lhs: Project, rhs: Project) -> Bool {
+        lhs.id == rhs.id
     }
 }

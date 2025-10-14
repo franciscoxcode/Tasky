@@ -1,18 +1,12 @@
-//
-//  NavigationBarView.swift
-//  Tasky
-//
-//  Created by Francisco Jean on 08/10/25.
-//
-
 import SwiftUI
 
 struct NavigationBarView: View {
     @Binding var projects: [Project]
     let section: Project.SectionType
     var onTapNew: () -> Void
+    var onEdit: (Project) -> Void
     @State private var showReorderSheet = false
-    
+
     var body: some View {
         VStack {
             HStack {
@@ -33,9 +27,9 @@ struct NavigationBarView: View {
                     Image(systemName: "dollarsign.circle.fill")
                         .foregroundColor(.yellow)
                         .font(.title3)
-                    
+
                     Button(action: {
-                        // Placeholder para abrir configuración
+                        // Placeholder for settings action
                     }) {
                         Image(systemName: "person.circle.fill")
                             .foregroundColor(.primary)
@@ -47,11 +41,12 @@ struct NavigationBarView: View {
             .padding(.horizontal, 25)
             .padding(.top, 15)
             .padding(.bottom, 12)
-            
+
             ProjectsBar(
                 projects: projects,
                 section: section,
-                onTapNew: onTapNew
+                onTapNew: onTapNew,
+                onEdit: onEdit
             )
         }
     }
@@ -61,6 +56,7 @@ struct NavigationBarView: View {
     NavigationBarView(
         projects: .constant(SampleData.sampleProjects),
         section: .tasks,
-        onTapNew: {}
+        onTapNew: {},
+        onEdit: { _ in }
     )
 }
