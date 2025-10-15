@@ -18,7 +18,6 @@ struct ContentView: View {
     @State private var tasksDateFilter: DateFilterOption = .anyDate
     @State private var inlineDatePickerTab: Tab?
     @State private var inlinePickedDate = Date()
-    @State private var shouldIgnoreNextDateChange = false
     @StateObject private var tasksViewModel = TasksViewModel(tasks: SampleData.sampleTasks)
     @StateObject private var eventsViewModel = EventsViewModel(events: SampleData.sampleEvents)
     @StateObject private var notesViewModel = NotesViewModel(notes: SampleData.sampleNotes)
@@ -183,18 +182,14 @@ struct ContentView: View {
 
         if filter.isSpecificSelection == false, inlineDatePickerTab == tab {
             inlineDatePickerTab = nil
-            shouldIgnoreNextDateChange = false
         }
     }
 
     private func toggleInlineDatePicker(for tab: Tab) {
         if inlineDatePickerTab == tab {
             inlineDatePickerTab = nil
-            shouldIgnoreNextDateChange = false
             return
         }
-
-        inlineDatePickerTab = tab
 
         let calendar = Calendar.current
         let defaultDate = calendar.startOfDay(for: Date())
@@ -207,12 +202,8 @@ struct ContentView: View {
             targetDate = defaultDate
         }
 
-        if inlinePickedDate != targetDate {
-            shouldIgnoreNextDateChange = true
-            inlinePickedDate = targetDate
-        } else {
-            shouldIgnoreNextDateChange = false
-        }
+        inlinePickedDate = targetDate
+        inlineDatePickerTab = tab
     }
 
     @ViewBuilder
@@ -227,7 +218,7 @@ struct ContentView: View {
             .labelsHidden()
             .padding(.horizontal, 20)
             .padding(.top, 4)
-            .padding(.bottom, 14)
+            .padding(.bottom, 0)
             .onChange(of: inlinePickedDate) { _, newValue in
                 handleInlineDateSelection(newValue, for: tab)
             }
@@ -235,15 +226,6 @@ struct ContentView: View {
     }
 
     private func handleInlineDateSelection(_ date: Date, for tab: Tab) {
-        if shouldIgnoreNextDateChange {
-            shouldIgnoreNextDateChange = false
-            return
-        }
-
-        applyInlinePickedDate(date, for: tab)
-    }
-
-    private func applyInlinePickedDate(_ date: Date, for tab: Tab) {
         let calendar = Calendar.current
         let normalized = calendar.startOfDay(for: date)
         selectDateFilter(.specific(normalized), for: tab)
