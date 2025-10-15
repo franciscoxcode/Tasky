@@ -16,9 +16,9 @@ struct ContentView: View {
     @State private var selectedProjectID: UUID? = nil
     @State private var eventsDateFilter: DateFilterOption = .anyDate
     @State private var tasksDateFilter: DateFilterOption = .anyDate
-    @State private var isShowingDatePicker = false
-    @State private var activeDatePickerTab: Tab?
-    @State private var tempPickedDate = Date()
+    @State private var inlineDatePickerTab: Tab?
+    @State private var inlinePickedDate = Date()
+    @State private var shouldIgnoreNextDateChange = false
     @StateObject private var tasksViewModel = TasksViewModel(tasks: SampleData.sampleTasks)
     @StateObject private var eventsViewModel = EventsViewModel(events: SampleData.sampleEvents)
     @StateObject private var notesViewModel = NotesViewModel(notes: SampleData.sampleNotes)
@@ -50,18 +50,21 @@ struct ContentView: View {
             if selectedTab == .events {
                 DateFilterBar(
                     selectedFilter: eventsDateFilter,
-                    onSelect: { eventsDateFilter = $0 },
-                    onPickDate: { presentDatePicker(for: .events) }
+                    onSelect: { selectDateFilter($0, for: .events) },
+                    onPickDate: { toggleInlineDatePicker(for: .events) }
                 )
                 .padding(.top, 12)
+                .padding(.bottom, inlineDatePickerTab == .events ? 0 : 14)
+                inlineDatePicker(for: .events)
             } else if selectedTab == .tasks {
                 DateFilterBar(
                     selectedFilter: tasksDateFilter,
-                    onSelect: { tasksDateFilter = $0 },
-                    onPickDate: { presentDatePicker(for: .tasks) }
+                    onSelect: { selectDateFilter($0, for: .tasks) },
+                    onPickDate: { toggleInlineDatePicker(for: .tasks) }
                 )
                 .padding(.top, 12)
-                .padding(.bottom, 14)
+                .padding(.bottom, inlineDatePickerTab == .tasks ? 0 : 14)
+                inlineDatePicker(for: .tasks)
             }
 
             TabView(selection: $selectedTab) {
@@ -146,7 +149,7 @@ struct ContentView: View {
             eventsViewModel.updateFilter(selectedProjectID: newValue)
             notesViewModel.updateFilter(selectedProjectID: newValue)
         }
-        .onChange(of: selectedTab) { _, _ in
+        .onChange(of: selectedTab) { _, newTab in
             guard
                 let selectedID = selectedProjectID,
                 let project = projects.first(where: { $0.id == selectedID })
@@ -155,6 +158,10 @@ struct ContentView: View {
             if project.visibleIn.contains(currentSection) == false {
                 selectedProjectID = nil
             }
+
+            if inlineDatePickerTab != newTab {
+                inlineDatePickerTab = nil
+            }
         }
         .onChange(of: eventsDateFilter) { _, newValue in
             eventsViewModel.updateDateFilter(newValue)
@@ -162,72 +169,9 @@ struct ContentView: View {
         .onChange(of: tasksDateFilter) { _, newValue in
             tasksViewModel.updateDateFilter(newValue)
         }
-        .sheet(isPresented: $isShowingDatePicker) {
-            NavigationStack {
-                VStack(alignment: .leading, spacing: 16) {
-                    DatePicker(
-                        "Select Date",
-                        selection: $tempPickedDate,
-                        displayedComponents: .date
-                    )
-                    .datePickerStyle(.graphical)
-                    .labelsHidden()
-                    .padding()
-                }
-                .navigationTitle("Pick a Date")
-                .toolbar {
-                    ToolbarItem(placement: .cancellationAction) {
-                        Button("Cancel") { cancelDatePicker() }
-                    }
-                    ToolbarItem(placement: .confirmationAction) {
-                        Button("Apply") { applyPickedDate() }
-                    }
-                }
-            }
-            .presentationDetents([.medium])
-        }
     }
 
-    private func presentDatePicker(for tab: Tab) {
-        activeDatePickerTab = tab
-        let calendar = Calendar.current
-        let today = calendar.startOfDay(for: Date())
-
-        switch tab {
-        case .events:
-            if case let .specific(date) = eventsDateFilter {
-                tempPickedDate = date
-            } else {
-                tempPickedDate = today
-            }
-        case .tasks:
-            if case let .specific(date) = tasksDateFilter {
-                tempPickedDate = date
-            } else {
-                tempPickedDate = today
-            }
-        case .notes:
-            tempPickedDate = today
-        }
-
-        isShowingDatePicker = true
-    }
-
-    private func cancelDatePicker() {
-        isShowingDatePicker = false
-        activeDatePickerTab = nil
-    }
-
-    private func applyPickedDate() {
-        guard let tab = activeDatePickerTab else {
-            cancelDatePicker()
-            return
-        }
-
-        let calendar = Calendar.current
-        let normalizedDate = calendar.startOfDay(for: tempPickedDate)
-        let filter = DateFilterOption.specific(normalizedDate)
-
+    private func selectDateFilter(_ filter: DateFilterOption, for tab: Tab) {
         switch tab {
         case .events:
             eventsDateFilter = filter
@@ -237,8 +181,84 @@ struct ContentView: View {
             break
         }
 
-        isShowingDatePicker = false
-        activeDatePickerTab = nil
+        if filter.isSpecificSelection == false, inlineDatePickerTab == tab {
+            inlineDatePickerTab = nil
+            shouldIgnoreNextDateChange = false
+        }
+    }
+
+    private func toggleInlineDatePicker(for tab: Tab) {
+        if inlineDatePickerTab == tab {
+            inlineDatePickerTab = nil
+            shouldIgnoreNextDateChange = false
+            return
+        }
+
+        inlineDatePickerTab = tab
+
+        let calendar = Calendar.current
+        let defaultDate = calendar.startOfDay(for: Date())
+        let currentFilter = dateFilter(for: tab)
+        let targetDate: Date
+
+        if case let .specific(date) = currentFilter {
+            targetDate = date
+        } else {
+            targetDate = defaultDate
+        }
+
+        if inlinePickedDate != targetDate {
+            shouldIgnoreNextDateChange = true
+            inlinePickedDate = targetDate
+        } else {
+            shouldIgnoreNextDateChange = false
+        }
+    }
+
+    @ViewBuilder
+    private func inlineDatePicker(for tab: Tab) -> some View {
+        if inlineDatePickerTab == tab {
+            DatePicker(
+                "",
+                selection: $inlinePickedDate,
+                displayedComponents: .date
+            )
+            .datePickerStyle(.graphical)
+            .labelsHidden()
+            .padding(.horizontal, 20)
+            .padding(.top, 4)
+            .padding(.bottom, 14)
+            .onChange(of: inlinePickedDate) { _, newValue in
+                handleInlineDateSelection(newValue, for: tab)
+            }
+        }
+    }
+
+    private func handleInlineDateSelection(_ date: Date, for tab: Tab) {
+        if shouldIgnoreNextDateChange {
+            shouldIgnoreNextDateChange = false
+            return
+        }
+
+        applyInlinePickedDate(date, for: tab)
+    }
+
+    private func applyInlinePickedDate(_ date: Date, for tab: Tab) {
+        let calendar = Calendar.current
+        let normalized = calendar.startOfDay(for: date)
+        selectDateFilter(.specific(normalized), for: tab)
+        inlineDatePickerTab = nil
+    }
+
+    private func dateFilter(for tab: Tab) -> DateFilterOption {
+        switch tab {
+        case .events:
+            return eventsDateFilter
+        case .tasks:
+            return tasksDateFilter
+        case .notes:
+            return .anyDate
+        }
     }
 }
 

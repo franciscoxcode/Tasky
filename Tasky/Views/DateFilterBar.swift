@@ -55,8 +55,8 @@ struct DateFilterBar: View {
 
         return Text(text)
             .font(.footnote)
-            .fontWeight(isSpecific ? .semibold : .regular)
-            .foregroundStyle(isSpecific ? Color.primary : Color.secondary)
+            .underline(isSpecific ? true : false)
+            .foregroundStyle(isSpecific ? Color.accentColor : Color.secondary)
     }
 
     private func label(for option: DateFilterOption) -> String {
