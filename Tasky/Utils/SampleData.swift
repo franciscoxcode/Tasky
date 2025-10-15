@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 
+@MainActor
 struct SampleData {
     static let sampleProjects = [
         Project(emoji: "📚", name: "Study", color: .blue, visibleIn: Set(Project.SectionType.allCases)),

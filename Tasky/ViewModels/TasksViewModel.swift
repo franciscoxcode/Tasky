@@ -41,7 +41,7 @@ final class TasksViewModel: ObservableObject {
             updatedFiltered[index].order = ordersToReuse[index]
         }
 
-        if let projectID = selectedProjectID {
+        if selectedProjectID != nil {
             for updatedTask in updatedFiltered {
                 if let allIndex = allTasks.firstIndex(where: { $0.id == updatedTask.id }) {
                     allTasks[allIndex].order = updatedTask.order

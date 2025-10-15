@@ -41,7 +41,7 @@ final class NotesViewModel: ObservableObject {
             updatedFiltered[index].order = ordersToReuse[index]
         }
 
-        if let projectID = selectedProjectID {
+        if selectedProjectID != nil {
             for updatedNote in updatedFiltered {
                 if let allIndex = allNotes.firstIndex(where: { $0.id == updatedNote.id }) {
                     allNotes[allIndex].order = updatedNote.order

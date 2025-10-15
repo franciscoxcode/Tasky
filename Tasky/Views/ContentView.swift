@@ -119,12 +119,12 @@ struct ContentView: View {
         }
         .animation(.easeInOut, value: showNewProject)
         .animation(.easeInOut, value: editingProject)
-        .onChange(of: selectedProjectID) { newValue in
+        .onChange(of: selectedProjectID) { _, newValue in
             tasksViewModel.updateFilter(selectedProjectID: newValue)
             eventsViewModel.updateFilter(selectedProjectID: newValue)
             notesViewModel.updateFilter(selectedProjectID: newValue)
         }
-        .onChange(of: selectedTab) { _ in
+        .onChange(of: selectedTab) { _, _ in
             guard
                 let selectedID = selectedProjectID,
                 let project = projects.first(where: { $0.id == selectedID })

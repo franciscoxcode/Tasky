@@ -37,7 +37,7 @@ final class EventsViewModel: ObservableObject {
     }()
 
     init(events: [Event]) {
-        let sorted = events.sorted(by: Self.eventComparator)
+        let sorted = Self.sortEvents(events, calendar: calendar)
         self.allEvents = sorted
         self.filteredEvents = sorted
         self.groupedSections = Self.buildSections(from: sorted, calendar: calendar, headerFormatter: headerFormatter)
@@ -45,12 +45,11 @@ final class EventsViewModel: ObservableObject {
 
     func updateFilter(selectedProjectID: UUID?) {
         if let projectID = selectedProjectID {
-            filteredEvents = allEvents
-                .filter { $0.projectID == projectID }
-                .sorted(by: Self.eventComparator)
+            let filtered = allEvents.filter { $0.projectID == projectID }
+            filteredEvents = Self.sortEvents(filtered, calendar: calendar)
             groupedSections = []
         } else {
-            filteredEvents = allEvents.sorted(by: Self.eventComparator)
+            filteredEvents = Self.sortEvents(allEvents, calendar: calendar)
             groupedSections = Self.buildSections(from: filteredEvents, calendar: calendar, headerFormatter: headerFormatter)
         }
     }
@@ -79,19 +78,20 @@ final class EventsViewModel: ObservableObject {
         return timeFormatter.string(from: start)
     }
 
-    private static func eventComparator(_ lhs: Event, _ rhs: Event) -> Bool {
-        let calendar = Calendar.current
-        let lhsDay = calendar.startOfDay(for: lhs.date)
-        let rhsDay = calendar.startOfDay(for: rhs.date)
+    private static func sortEvents(_ events: [Event], calendar: Calendar) -> [Event] {
+        events.sorted { lhs, rhs in
+            let lhsDay = calendar.startOfDay(for: lhs.date)
+            let rhsDay = calendar.startOfDay(for: rhs.date)
 
-        if lhsDay == rhsDay {
-            if lhs.isAllDay != rhs.isAllDay {
-                return lhs.isAllDay && !rhs.isAllDay
+            if lhsDay == rhsDay {
+                if lhs.isAllDay != rhs.isAllDay {
+                    return lhs.isAllDay && !rhs.isAllDay
+                }
+                return lhs.date < rhs.date
             }
+
             return lhs.date < rhs.date
         }
-
-        return lhs.date < rhs.date
     }
 
     private static func buildSections(
@@ -111,7 +111,7 @@ final class EventsViewModel: ObservableObject {
         let sortedKeys = grouped.keys.sorted()
 
         return sortedKeys.map { date in
-            let eventsForDay = grouped[date]?.sorted(by: Self.eventComparator) ?? []
+            let eventsForDay = Self.sortEvents(grouped[date] ?? [], calendar: calendar)
             var title = headerFormatter.string(from: date)
 
             if calendar.isDate(date, inSameDayAs: startOfToday) {
