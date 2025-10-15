@@ -18,11 +18,13 @@ struct NotesView: View {
                         VStack(alignment: .leading, spacing: 4) {
                             if let title = note.title, !title.isEmpty {
                                 Text(title)
-                                    .font(.headline)
+                                    .font(.body)
+                                    .foregroundColor(.primary)
+                                    .opacity(0.7)
                             }
 
                             Text(note.content)
-                                .font(.body)
+                                .font(.footnote)
                                 .foregroundColor(.secondary)
                         }
                     }

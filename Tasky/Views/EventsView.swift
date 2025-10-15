@@ -25,6 +25,7 @@ struct EventsView: View {
                         Section(header:
                             Text(section.title)
                                 .font(.subheadline)
+                                .bold()
                                 .foregroundColor(.primary)
                                 .padding(.bottom, 4)
                         ) {

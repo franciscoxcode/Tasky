@@ -27,6 +27,8 @@ struct TasksView: View {
                                 .foregroundColor(task.isCompleted ? .green : .gray)
 
                             Text(task.title)
+                                .font(.body)
+                                .opacity(0.7)
                         }
                     }
                     .onMove { indices, newOffset in
