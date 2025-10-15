@@ -12,6 +12,7 @@ struct Event: Identifiable {
     var emoji: Character
     var date: Date
     var endDate: Date? = nil
+    var isAllDay: Bool
     var projectID: UUID
     
     var reminders: [Reminder] = []
@@ -23,6 +24,7 @@ struct Event: Identifiable {
         date: Date,
         projectID: UUID,
         endDate: Date? = nil,
+        isAllDay: Bool = false,
         order: Int = 0
     ) {
         if let e = emoji, e.unicodeScalars.first?.properties.isEmojiPresentation == true {
@@ -35,6 +37,7 @@ struct Event: Identifiable {
         self.date = date
         self.projectID = projectID
         self.endDate = endDate
+        self.isAllDay = isAllDay
         self.order = order
     }
 }

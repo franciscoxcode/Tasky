@@ -19,37 +19,56 @@ struct EventsView: View {
                 }, description: {
                     Text("Try selecting a different project or create a new event.")
                 })
-            } else {
+            } else if selectedProjectID == nil {
                 List {
-                    ForEach(viewModel.filteredEvents) { event in
-                        VStack(alignment: .leading, spacing: 5) {
-                            HStack(spacing: 8) {
-                                Text(String(event.emoji))
-                                    .font(.title3)
-                                Text(event.title)
-                                    .font(.headline)
+                    ForEach(viewModel.groupedSections) { section in
+                        Section(header:
+                            Text(section.title)
+                                .font(.subheadline)
+                                .foregroundColor(.primary)
+                                .padding(.bottom, 4)
+                        ) {
+                            ForEach(section.events) { event in
+                                eventRow(for: event, includeDate: false)
                             }
-
-                            if let endDate = event.endDate, endDate != event.date {
-                                Text(viewModel.formattedDateRange(start: event.date, end: endDate))
-                                    .font(.subheadline)
-                                    .foregroundColor(.secondary)
-                            } else {
-                                Text(event.date, style: .date)
-                                    .font(.subheadline)
-                                    .foregroundColor(.secondary)
-                            }
-                            
                         }
-                    }
-                    .onMove { indices, newOffset in
-                        viewModel.move(from: indices, to: newOffset, selectedProjectID: selectedProjectID)
                     }
                 }
                 .listStyle(.plain)
-                .environment(\.editMode, .constant(.active))
+            } else {
+                List(viewModel.filteredEvents) { event in
+                    eventRow(for: event, includeDate: true)
+                }
+                .listStyle(.plain)
             }
         }
+    }
+
+    @ViewBuilder
+    private func eventRow(for event: Event, includeDate: Bool) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(spacing: 8) {
+                Text(String(event.emoji))
+                    .font(.body)
+
+                Text(event.title)
+                    .font(.body)
+                    .foregroundColor(.primary)
+                    .opacity(0.7)
+            }
+
+            if includeDate {
+                Text(event.date, format: .dateTime.day().month().year())
+                    .font(.footnote)
+                    .foregroundColor(.secondary)
+            }
+
+            let detail = viewModel.detailText(for: event)
+            Text(detail)
+                .font(.footnote)
+                .foregroundColor(.secondary)
+        }
+        .padding(.vertical, 4)
     }
 }
 
