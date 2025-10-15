@@ -37,6 +37,7 @@ struct TasksView: View {
                 }
                 .listStyle(.plain)
                 .environment(\.editMode, .constant(.active))
+                .padding(.horizontal, 18)
             }
         }
     }

@@ -57,7 +57,7 @@ struct ProjectsBar: View {
                     }
                 }
             }
-            .padding(.horizontal, 25)
+            .padding(.horizontal, 22)
         }
     }
 

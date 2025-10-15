@@ -23,9 +23,24 @@ struct SampleData {
     ]
     
     static let sampleTasks = [
-        Task(title: "Finish SwiftUI tutorial", projectID: sampleProjects[0].id, order: 0),
-        Task(title: "Prepare meeting slides", projectID: sampleProjects[1].id, order: 1),
-        Task(title: "Do 20 push-ups", projectID: sampleProjects[2].id, order: 2)
+        Task(
+            title: "Finish SwiftUI tutorial",
+            projectID: sampleProjects[0].id,
+            dueDate: SampleData.makeDate(daysFromToday: 0, hour: 20, minute: 0),
+            order: 0
+        ),
+        Task(
+            title: "Prepare meeting slides",
+            projectID: sampleProjects[1].id,
+            dueDate: SampleData.makeDate(daysFromToday: 1, hour: 9, minute: 0),
+            order: 1
+        ),
+        Task(
+            title: "Do 20 push-ups",
+            projectID: sampleProjects[2].id,
+            dueDate: SampleData.makeDate(daysFromToday: 2, hour: 7, minute: 0),
+            order: 2
+        )
     ]
     
     static let sampleEvents = [

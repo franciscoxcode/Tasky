@@ -15,6 +15,8 @@ final class EventsViewModel: ObservableObject {
     @Published private(set) var groupedSections: [EventSection] = []
 
     private let calendar = Calendar.current
+    private var currentProjectID: UUID?
+    private var currentDateFilter: DateFilterOption = .anyDate
     private let headerFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "d MMMM yyyy"
@@ -41,17 +43,17 @@ final class EventsViewModel: ObservableObject {
         self.allEvents = sorted
         self.filteredEvents = sorted
         self.groupedSections = Self.buildSections(from: sorted, calendar: calendar, headerFormatter: headerFormatter)
+        applyFilters()
     }
 
     func updateFilter(selectedProjectID: UUID?) {
-        if let projectID = selectedProjectID {
-            let filtered = allEvents.filter { $0.projectID == projectID }
-            filteredEvents = Self.sortEvents(filtered, calendar: calendar)
-            groupedSections = []
-        } else {
-            filteredEvents = Self.sortEvents(allEvents, calendar: calendar)
-            groupedSections = Self.buildSections(from: filteredEvents, calendar: calendar, headerFormatter: headerFormatter)
-        }
+        currentProjectID = selectedProjectID
+        applyFilters()
+    }
+
+    func updateDateFilter(_ filter: DateFilterOption) {
+        currentDateFilter = filter
+        applyFilters()
     }
 
     func detailText(for event: Event) -> String {
@@ -131,5 +133,24 @@ final class EventsViewModel: ObservableObject {
             text += " • \(time)"
         }
         return "Until \(text)"
+    }
+
+    private func applyFilters() {
+        var events = allEvents
+
+        if let projectID = currentProjectID {
+            events = events.filter { $0.projectID == projectID }
+        }
+
+        events = events.filter { currentDateFilter.matches(date: $0.date, calendar: calendar) }
+
+        let sorted = Self.sortEvents(events, calendar: calendar)
+        filteredEvents = sorted
+
+        if currentProjectID == nil {
+            groupedSections = Self.buildSections(from: sorted, calendar: calendar, headerFormatter: headerFormatter)
+        } else {
+            groupedSections = []
+        }
     }
 }

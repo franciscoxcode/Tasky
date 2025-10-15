@@ -33,6 +33,7 @@ struct EventsView: View {
                                 eventRow(for: event, includeDate: false)
                             }
                         }
+                        .padding(.horizontal, 16)
                     }
                 }
                 .listStyle(.plain)
@@ -43,6 +44,7 @@ struct EventsView: View {
                 .listStyle(.plain)
             }
         }
+      
     }
 
     @ViewBuilder
@@ -69,7 +71,6 @@ struct EventsView: View {
                 .font(.footnote)
                 .foregroundColor(.secondary)
         }
-        .padding(.vertical, 4)
     }
 }
 

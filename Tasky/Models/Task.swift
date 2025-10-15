@@ -13,6 +13,7 @@ struct Task: Identifiable {
     var isCompleted: Bool = false
     let createdAt = Date()
     var projectID: UUID
+    var dueDate: Date
     var reminders: [Reminder] = []
     var order: Int
 
@@ -20,12 +21,14 @@ struct Task: Identifiable {
         title: String,
         isCompleted: Bool = false,
         projectID: UUID,
+        dueDate: Date,
         reminders: [Reminder] = [],
         order: Int = 0
     ) {
         self.title = title
         self.isCompleted = isCompleted
         self.projectID = projectID
+        self.dueDate = dueDate
         self.reminders = reminders
         self.order = order
     }
